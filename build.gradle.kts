@@ -1,6 +1,6 @@
 plugins {
-    kotlin("multiplatform") version "1.9.0"
-    kotlin("plugin.serialization") version "1.9.0"
+    kotlin("multiplatform") version "1.9.23"
+    kotlin("plugin.serialization") version "1.9.23"
     id("maven-publish")
     id("com.android.library") version "8.1.2"
 }
@@ -32,11 +32,19 @@ kotlin {
 
     explicitApi()
 
-    ios()
+    applyDefaultHierarchyTemplate()
+
+    iosArm64()
+    iosX64()
     iosSimulatorArm64()
-    watchos()
+
+    watchosArm32()
+    watchosArm64()
+    watchosX64()
     watchosSimulatorArm64()
-    tvos()
+
+    tvosArm64()
+    tvosX64()
     tvosSimulatorArm64()
 
     macosX64()
@@ -61,10 +69,6 @@ kotlin {
         publishLibraryVariants("release", "debug")
     }
 
-    val darwinTargets = listOf("ios", "iosSimulatorArm64", "watchos", "watchosSimulatorArm64", "tvos", "tvosSimulatorArm64", "macosX64", "macosArm64")
-    val linuxTargets = listOf("linuxX64")
-    val mingwTargets = listOf("mingwX64")
-
     jvm {
         jvmToolchain(8)
         testRuns.named("test") {
@@ -73,13 +77,18 @@ kotlin {
             }
         }
     }
-    js("jsBrowser", IR) {
-        browser()
-        attributes.attribute(kotlinJsTargetAttribute, targetName)
-    }
-    js("jsNode", IR) {
+
+//    js("jsBrowser", IR) {
+//        browser()
+//        attributes.attribute(kotlinJsTargetAttribute, targetName)
+//    }
+//    js("jsNode", IR) {
+//        nodejs()
+//        attributes.attribute(kotlinJsTargetAttribute, targetName)
+//    }
+
+    js {
         nodejs()
-        attributes.attribute(kotlinJsTargetAttribute, targetName)
     }
 
     sourceSets.all {
@@ -94,7 +103,7 @@ kotlin {
     }
 
     sourceSets {
-        val commonMain by getting {
+        commonMain {
             dependencies {
                 implementation("io.ktor:ktor-client-core:$ktorVersion")
                 implementation("io.ktor:ktor-client-content-negotiation:$ktorVersion")
@@ -107,60 +116,50 @@ kotlin {
             }
         }
 
-        val commonTest by getting {
+        commonTest {
             dependencies {
-                implementation(kotlin("test"))
+                //TODO: Find out why this notation won't work for intellisense
+//                implementation(kotlin("test"))
+                implementation("org.jetbrains.kotlin:kotlin-test:1.9.23")
                 implementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.7.3")
             }
         }
 
-        val jvmMain by getting {
+        jvmMain {
             dependencies {
                 implementation("io.ktor:ktor-client-cio-jvm:$ktorVersion")
             }
         }
 
-        val jvmTest by getting {
-
-        }
-
-        val jsMain by creating {
-            dependsOn(commonMain)
-            dependencies {
-                implementation("io.ktor:ktor-client-js:$ktorVersion")
-            }
-        }
-        val jsTest by creating {
-            dependsOn(commonTest)
-        }
-
-        val jsBrowserMain by getting {
-            dependsOn(jsMain)
-            sourceSets["jsBrowserMain"].dependsOn(this)
-        }
-
-        val jsBrowserTest by getting {
-            dependsOn(jsTest)
-            sourceSets["jsBrowserTest"].dependsOn(this)
-        }
-
-        val jsNodeMain by getting {
-            dependsOn(jsMain)
-            sourceSets["jsNodeMain"].dependsOn(this)
-        }
-
-        val jsNodeTest by getting {
-            dependsOn(jsTest)
-            sourceSets["jsNodeTest"].dependsOn(this)
-        }
-
-        val nativeMain by creating {
-            dependsOn(commonMain)
-        }
-
-        val nativeTest by creating {
-            dependsOn(commonTest)
-        }
+//        val jsMain by creating {
+//            dependsOn(commonMain.get())
+//            dependencies {
+//                implementation("io.ktor:ktor-client-js:$ktorVersion")
+//            }
+//        }
+//        val jsTest by creating {
+//            dependsOn(commonTest.get())
+//        }
+//
+//        val jsBrowserMain by getting {
+//            dependsOn(jsMain)
+//            sourceSets["jsBrowserMain"].dependsOn(this)
+//        }
+//
+//        val jsBrowserTest by getting {
+//            dependsOn(jsTest)
+//            sourceSets["jsBrowserTest"].dependsOn(this)
+//        }
+//
+//        val jsNodeMain by getting {
+//            dependsOn(jsMain)
+//            sourceSets["jsNodeMain"].dependsOn(this)
+//        }
+//
+//        val jsNodeTest by getting {
+//            dependsOn(jsTest)
+//            sourceSets["jsNodeTest"].dependsOn(this)
+//        }
 
         //FIXME: Linux binaries will not compile due to the ld.gold linker being used. Windows cannot use elf objects.
 //        val linuxMain by creating {
@@ -170,51 +169,6 @@ kotlin {
 //                implementation("io.ktor:ktor-client-curl:$ktorVersion")
 //            }
 //        }
-//
-//        val linuxTest by creating {
-//            dependsOn(linuxMain)
-//            linuxTargets.forEach { sourceSets["${it}Test"].dependsOn(this) }
-//        }
-
-        val darwinMain by creating {
-            dependsOn(nativeMain)
-            darwinTargets.forEach { sourceSets["${it}Main"].dependsOn(this) }
-            dependencies {
-                implementation("io.ktor:ktor-client-darwin:$ktorVersion")
-            }
-        }
-
-        val darwinTest by creating {
-            dependsOn(nativeTest)
-            darwinTargets.forEach { sourceSets["${it}Test"].dependsOn(this) }
-
-        }
-
-        val mingwMain by creating {
-            dependsOn(nativeMain)
-            mingwTargets.forEach { sourceSets["${it}Main"].dependsOn(this) }
-            dependencies {
-                implementation("io.ktor:ktor-client-winhttp:$ktorVersion")
-            }
-
-        }
-
-        val mingwTest by creating {
-            dependsOn(nativeTest)
-            mingwTargets.forEach { sourceSets["${it}Test"].dependsOn(this) }
-        }
-
-        val androidMain by getting {
-            dependsOn(nativeMain)
-        }
-
-        val androidUnitTest by getting {
-            dependsOn(nativeTest)
-        }
-
-        val androidInstrumentedTest by getting {
-            dependsOn(nativeTest)
-        }
 
     }
 }
