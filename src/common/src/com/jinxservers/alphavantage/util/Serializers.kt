@@ -234,3 +234,26 @@ internal object PercentAsStringSerializer4D : KSerializer<Double> {
         return decoder.decodeString().substringBefore('%').toDouble() / 100
     }
 }
+
+internal object PercentAsStringSerializer4DMax : KSerializer<Double> {
+    override val descriptor: SerialDescriptor = PrimitiveSerialDescriptor("PercentAsString4DMax", PrimitiveKind.STRING)
+
+    override fun serialize(encoder: Encoder, value: Double) {
+        val string = (value * 100).toString()
+        val integerPart = string.substringBefore(".")
+        val decimalPart = string.substringAfter(".").let {
+            if (it.count() > 4) {
+                it.dropLast(it.count() - 4)
+            } else {
+                it
+            }
+        }
+        encoder.encodeString("$integerPart.$decimalPart%")
+    }
+
+    override fun deserialize(decoder: Decoder): Double {
+        // This weird math is used to round the percentage to 4 decimal places in a multiplatform compatible way
+        return (decoder.decodeString().substringBefore('%').toDouble() * 10000).toInt().toDouble() / 1000000
+    }
+
+}
