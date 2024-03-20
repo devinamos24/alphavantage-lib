@@ -80,8 +80,18 @@ internal object IntegerAsStringSerializer : KSerializer<Int> {
 internal object DoubleAsStringSerializer : KSerializer<Double> {
     override val descriptor: SerialDescriptor = PrimitiveSerialDescriptor("DoubleAsString", PrimitiveKind.STRING)
 
-    override fun serialize(encoder: Encoder, value: Double) =
-        encoder.encodeString(value.toString())
+    override fun serialize(encoder: Encoder, value: Double) {
+        // This string manipulation fixes inconsistencies with the JsNode Double.toString() method
+        val string = value.toString().let {
+            if (!it.contains(".")) {
+                it.plus(".0")
+            } else {
+                it
+            }
+        }
+        encoder.encodeString(string)
+    }
+
 
 
     override fun deserialize(decoder: Decoder): Double =
@@ -233,4 +243,27 @@ internal object PercentAsStringSerializer4D : KSerializer<Double> {
     override fun deserialize(decoder: Decoder): Double {
         return decoder.decodeString().substringBefore('%').toDouble() / 100
     }
+}
+
+internal object PercentAsStringSerializer4DMax : KSerializer<Double> {
+    override val descriptor: SerialDescriptor = PrimitiveSerialDescriptor("PercentAsString4DMax", PrimitiveKind.STRING)
+
+    override fun serialize(encoder: Encoder, value: Double) {
+        val string = (value * 100).toString()
+        val integerPart = string.substringBefore(".")
+        val decimalPart = string.substringAfter(".").let {
+            if (it.count() > 4) {
+                it.dropLast(it.count() - 4)
+            } else {
+                it
+            }
+        }
+        encoder.encodeString("$integerPart.$decimalPart%")
+    }
+
+    override fun deserialize(decoder: Decoder): Double {
+        // This weird math is used to round the percentage to 4 decimal places in a multiplatform compatible way
+        return (decoder.decodeString().substringBefore('%').toDouble() * 10000).toInt().toDouble() / 1000000
+    }
+
 }

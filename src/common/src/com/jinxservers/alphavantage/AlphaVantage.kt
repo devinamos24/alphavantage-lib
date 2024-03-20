@@ -1,5 +1,6 @@
 package com.jinxservers.alphavantage
 
+import com.jinxservers.alphavantage.alphaIntelligence.request.AlphaIntelligenceRequest
 import com.jinxservers.alphavantage.commodity.request.CommodityRequest
 import com.jinxservers.alphavantage.core.request.CoreRequest
 import com.jinxservers.alphavantage.crypto.request.CryptoRequest
@@ -65,6 +66,8 @@ public class AlphaVantage(
 ) : AlphaVantageBase(key, clientModifications) {
 
     public fun core(): CoreRequest = CoreRequest(this)
+
+    public fun alphaIntelligence(): AlphaIntelligenceRequest = AlphaIntelligenceRequest(this)
 
     public fun forex(): ForexRequest = ForexRequest(this)
 
