@@ -80,8 +80,18 @@ internal object IntegerAsStringSerializer : KSerializer<Int> {
 internal object DoubleAsStringSerializer : KSerializer<Double> {
     override val descriptor: SerialDescriptor = PrimitiveSerialDescriptor("DoubleAsString", PrimitiveKind.STRING)
 
-    override fun serialize(encoder: Encoder, value: Double) =
-        encoder.encodeString(value.toString())
+    override fun serialize(encoder: Encoder, value: Double) {
+        // This string manipulation fixes inconsistencies with the JsNode Double.toString() method
+        val string = value.toString().let {
+            if (!it.contains(".")) {
+                it.plus(".0")
+            } else {
+                it
+            }
+        }
+        encoder.encodeString(string)
+    }
+
 
 
     override fun deserialize(decoder: Decoder): Double =
