@@ -17,11 +17,24 @@ android {
 }
 
 group = "com.jinxservers"
-version = "1.0-SNAPSHOT"
+version = "0.1.0-alpha"
 
 repositories {
     mavenCentral()
     google()
+}
+
+publishing {
+    repositories {
+        maven {
+            name = "GitHubPackages"
+            url = uri("https://maven.pkg.github.com/devinamos24/alphavantage-lib")
+            credentials {
+                username = project.findProperty("gpr.user") as String? ?: System.getenv("USERNAME")
+                password = project.findProperty("gpr.key") as String? ?: System.getenv("TOKEN")
+            }
+        }
+    }
 }
 
 val kotlinJsTargetAttribute: Attribute<String> = Attribute.of("kotlinJsTarget", String::class.java)
