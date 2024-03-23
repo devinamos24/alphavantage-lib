@@ -33,10 +33,7 @@ jobs:
         run: chmod +x ./gradlew
 
       - name: Assemble project
-        run: ./gradlew assemble
+        run: ./gradlew assemble --stacktrace -PUSERNAME=${{ secrets.USERNAME }} -PTOKEN=${{ secrets.GITHUB_TOKEN }}
 
       - name: Publish to GitHub
-        run: ./gradlew publish
-        env:
-          USERNAME: ${{ secrets.USERNAME }}
-          TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: ./gradlew publish --stacktrace -PUSERNAME=${{ secrets.USERNAME }} -PTOKEN=${{ secrets.GITHUB_TOKEN }}

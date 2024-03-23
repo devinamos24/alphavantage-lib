@@ -19,6 +19,9 @@ android {
 group = "com.jinxservers"
 version = "0.1.0-alpha"
 
+val USERNAME: String by project
+val TOKEN: String by project
+
 repositories {
     mavenCentral()
     google()
@@ -30,8 +33,8 @@ publishing {
             name = "GitHubPackages"
             url = uri("https://maven.pkg.github.com/devinamos24/alphavantage-lib")
             credentials {
-                username = project.findProperty("gpr.user") as String? ?: System.getenv("USERNAME")
-                password = project.findProperty("gpr.key") as String? ?: System.getenv("TOKEN")
+                username = USERNAME
+                password = TOKEN
             }
         }
     }
