@@ -49,8 +49,8 @@ jobs:
 
       - name: Generate checksums for artifacts
         run: |
-          find . ! -name '*.asc' -type f -exec bash -c "sha1sum {} > {}.sha1" \;
-          find . ! -name '*.asc' ! -name '*.sha1' -type f -exec bash -c "md5sum {} > {}.md5" \;
+          find . ! -name '*.asc' -type f -exec bash -c "shasum -a 1 {} > {}.sha1" \;
+          find . ! -name '*.asc' ! -name '*.sha1' -type f -exec bash -c "md5 {} > {}.md5" \;
 
       - name: Zip artifacts
         run: find . -maxdepth 1 -type d  -exec bash -c "zip {}.zip {}" \;
