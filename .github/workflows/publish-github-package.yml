@@ -11,7 +11,7 @@ on:
 
 jobs:
   publish:
-    runs-on: ubuntu-latest
+    runs-on: macos-latest
     permissions:
       contents: read
 
@@ -33,7 +33,27 @@ jobs:
         run: chmod +x ./gradlew
 
       - name: Assemble project
-        run: ./gradlew assemble --stacktrace -PUSERNAME=${{ secrets.USERNAME }} -PTOKEN=${{ secrets.GITHUB_TOKEN }}
+        run: ./gradlew assemble
 
-      - name: Publish to GitHub
-        run: ./gradlew publish --stacktrace -PUSERNAME=${{ secrets.USERNAME }} -PTOKEN=${{ secrets.GITHUB_TOKEN }}
+      - name: Publish to local maven repo
+        run: ./gradlew publishToMavenLocal -Psigning.gnupg.keyName=${{ secrets.KEYNAME }} -Psigning.gnupg.passphrase=${{ secrets.PASSPHRASE }}
+
+      - name: Checkout to local maven repo
+        run: cd ~/.m2/repository/com/jinxservers/
+
+      - name: Generate checksums for artifacts
+        run: |
+          find . ! -name '*.asc' -type f -exec bash -c "sha1sum {} > {}.sha1" \;
+          find . ! -name '*.asc' ! -name '*.sha1' -type f -exec bash -c "md5sum {} > {}.md5" \;
+
+      - name: Zip artifacts
+        run: find . -maxdepth 1 -type d  -exec bash -c "zip {}.zip {}" \;
+
+      - name: Publish artifacts to Maven Central Portal
+        run: |
+          find . -maxdepth 1 \
+            -name '*.zip' \
+            -exec bash -c "\
+            curl --request POST --verbose \
+            --header 'Authorization: ${{ secrets.TOKENHEADER }}' \
+            --form bundle=@{}.zip https://central.sonatype.com/api/v1/publisher/upload" \;

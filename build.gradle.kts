@@ -1,6 +1,8 @@
 plugins {
     kotlin("multiplatform") version "1.9.23"
     kotlin("plugin.serialization") version "1.9.23"
+    id("org.jetbrains.dokka") version "1.9.20"
+    id("signing")
     id("maven-publish")
     id("com.android.library") version "8.1.2"
 }
@@ -19,8 +21,13 @@ android {
 group = "com.jinxservers"
 version = "0.1.0-alpha"
 
-val USERNAME: String by project
-val TOKEN: String by project
+val dokkaHtml by tasks.getting(org.jetbrains.dokka.gradle.DokkaTask::class)
+
+val javadocJar: TaskProvider<Jar> by tasks.registering(Jar::class) {
+    dependsOn(dokkaHtml)
+    archiveClassifier.set("javadoc")
+    from(dokkaHtml.outputDirectory)
+}
 
 repositories {
     mavenCentral()
@@ -28,16 +35,46 @@ repositories {
 }
 
 publishing {
-    repositories {
-        maven {
-            name = "GitHubPackages"
-            url = uri("https://maven.pkg.github.com/devinamos24/alphavantage-lib")
-            credentials {
-                username = USERNAME
-                password = TOKEN
+    publications {
+        create<MavenPublication>("mavenCentralPortal") {
+            artifact(javadocJar)
+            pom {
+
+                groupId = "com.jinxservers"
+                artifactId = "alphavantage-lib"
+                version = version
+
+
+                name = "Alpha Vantage API Wrapper"
+                description = "A library used to make API calls to the Alpha Vantage API"
+                url = "https://github.com/devinamos24/alphavantage-lib"
+                licenses {
+                    license {
+                        name = "The Apache License, Version 2.0"
+                        url = "https://www.apache.org/licenses/LICENSE-2.0.txt"
+                    }
+                }
+                developers {
+                    developer {
+                        name = "Devin Amos"
+                        email = "devin.amos24@gmail.com"
+                        organization = "Devin Amos"
+                        organizationUrl = "https://github.com/devinamos24"
+                    }
+                }
+                scm {
+                    connection = "scm:git:git://github.com/devinamos24/alphavantage-lib.git"
+                    developerConnection = "scm:git:ssh://github.com:devinamos24/alphavantage-lib.git"
+                    url = "http://github.com/devinamos24/alphavantage-lib/tree/master"
+                }
             }
         }
     }
+}
+
+signing {
+    useGpgCmd()
+    sign(publishing.publications)
 }
 
 val kotlinJsTargetAttribute: Attribute<String> = Attribute.of("kotlinJsTarget", String::class.java)
