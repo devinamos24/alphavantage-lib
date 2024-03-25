@@ -45,18 +45,19 @@ jobs:
         run: ./gradlew publishToMavenLocal -Psigning.gnupg.keyName=${{ secrets.KEYNAME }} -Psigning.gnupg.passphrase=${{ secrets.PASSPHRASE }}
 
       - name: Generate checksums for artifacts
-        working-directory: ~/.m2/repository/com/jinxservers
         run: |
+          cd ~/.m2/repository/com/jinxservers
           find . ! -name '*.asc' -type f -exec bash -c "shasum -a 1 {} > {}.sha1" \;
           find . ! -name '*.asc' ! -name '*.sha1' -type f -exec bash -c "md5 {} > {}.md5" \;
 
       - name: Zip artifacts
-        working-directory: ~/.m2/repository/com/jinxservers
-        run: find . -maxdepth 1 -type d  -exec bash -c "zip {}.zip {}" \;
+        run: |
+          cd ~/.m2/repository/com/jinxservers
+          find . -maxdepth 1 -type d  -exec bash -c "zip {}.zip {}" \;
 
       - name: Publish artifacts to Maven Central Portal
-        working-directory: ~/.m2/repository/com/jinxservers
         run: |
+          cd ~/.m2/repository/com/jinxservers
           find . -maxdepth 1 \
             -name '*.zip' \
             -exec bash -c "\
