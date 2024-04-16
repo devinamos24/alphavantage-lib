@@ -53,7 +53,7 @@ jobs:
       - name: Zip artifacts
         run: |
           cd ~/.m2/repository/com/jinxservers
-          find . -maxdepth 1 -type d  -exec bash -c "zip {}.zip {}" \;
+          find . -not -name "." -maxdepth 1 -type d  -exec bash -c "zip -r {}.zip {}" \;
 
       - name: Publish artifacts to Maven Central Portal
         run: |
