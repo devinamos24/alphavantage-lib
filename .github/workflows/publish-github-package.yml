@@ -47,21 +47,21 @@ jobs:
       - name: Generate checksums for artifacts
         run: |
           cd ~/.m2/repository/com/jinxservers
+          find . -name "maven-metadata-local.xml" -type f -exec bash -c "rm {}" \;
           find . ! -name '*.asc' -type f -exec bash -c "shasum -a 1 {} > {}.sha1" \;
           find . ! -name '*.asc' ! -name '*.sha1' -type f -exec bash -c "md5 {} > {}.md5" \;
 
       - name: Zip artifacts
         run: |
           cd ~/.m2/repository/com/jinxservers
-          find . -not -name "." -maxdepth 1 -type d  -exec bash -c "zip -r {}.zip {}" \;
+          mkdir -p com/jinxservers/
+          find . -maxdepth 1 -not -name "com" -not -name "." -type d -exec bash -c "mv {} com/jinxservers/" \;
+          zip -r alphavantage-lib.zip com
 
       - name: Publish artifacts to Maven Central Portal
         run: |
           cd ~/.m2/repository/com/jinxservers
-          find . -maxdepth 1 \
-            -name '*.zip' \
-            -exec bash -c "\
-            curl --request POST --verbose \
-            --header 'Authorization: ${{ secrets.TOKENHEADER }}' \
-            --form bundle=@{} \
-            --form publishingType='AUTOMATIC' https://central.sonatype.com/api/v1/publisher/upload" \;
+          curl --request POST --verbose \
+          --header 'Authorization: ${{ secrets.TOKENHEADER }}' \
+          --form bundle=@alphavantage-lib.zip \
+          --form publishingType='AUTOMATIC' https://central.sonatype.com/api/v1/publisher/upload
