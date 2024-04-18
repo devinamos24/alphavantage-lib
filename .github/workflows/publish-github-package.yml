@@ -44,6 +44,12 @@ jobs:
       - name: Publish to local maven repo
         run: ./gradlew publishToMavenLocal -Psigning.gnupg.keyName=${{ secrets.KEYNAME }} -Psigning.gnupg.passphrase=${{ secrets.PASSPHRASE }}
 
+      - name: Setup repository structure
+        run: |
+          cd ~/.m2/repository/com/jinxservers
+          mkdir -p com/jinxservers/
+          find . -maxdepth 1 -not -name "com" -not -name "." -type d -exec bash -c "mv {} com/jinxservers/" \;
+
       - name: Generate checksums for artifacts
         run: |
           cd ~/.m2/repository/com/jinxservers
@@ -54,8 +60,6 @@ jobs:
       - name: Zip artifacts
         run: |
           cd ~/.m2/repository/com/jinxservers
-          mkdir -p com/jinxservers/
-          find . -maxdepth 1 -not -name "com" -not -name "." -type d -exec bash -c "mv {} com/jinxservers/" \;
           zip -r alphavantage-lib.zip com
 
       - name: Publish artifacts to Maven Central Portal
