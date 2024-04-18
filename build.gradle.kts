@@ -23,8 +23,7 @@ version = "0.1.0-alpha"
 
 val dokkaHtml by tasks.getting(org.jetbrains.dokka.gradle.DokkaTask::class)
 
-val javadocJar: TaskProvider<Jar> by tasks.registering(Jar::class) {
-    dependsOn(dokkaHtml)
+val javadocJar by tasks.registering(Jar::class) {
     archiveClassifier.set("javadoc")
     from(dokkaHtml.outputDirectory)
 }
@@ -35,9 +34,14 @@ repositories {
 }
 
 publishing {
-    publications {
-        create<MavenPublication>("mavenCentralPortal") {
-            artifact(javadocJar)
+    publications.forEach {
+        if (it !is MavenPublication) {
+            return@forEach
+        }
+        it.artifact(javadocJar)
+    }
+
+    publications.withType<MavenPublication> {
             pom {
 
                 groupId = "com.jinxservers"
@@ -70,7 +74,6 @@ publishing {
             }
         }
     }
-}
 
 signing {
     useGpgCmd()
