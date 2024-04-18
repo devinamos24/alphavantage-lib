@@ -55,7 +55,7 @@ jobs:
           cd ~/.m2/repository/com/jinxservers
           find . -name "maven-metadata-local.xml" -type f -exec bash -c "rm {}" \;
           find . ! -name '*.asc' -type f -exec bash -c "shasum -a 1 {} > {}.sha1" \;
-          find . ! -name '*.asc' ! -name '*.sha1' -type f -exec bash -c "md5 {} > {}.md5" \;
+          find . ! -name '*.asc' ! -name '*.sha1' -type f -exec bash -c "md5sum {} > {}.md5" \;
 
       - name: Zip artifacts
         run: |
