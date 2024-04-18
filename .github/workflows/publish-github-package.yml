@@ -50,12 +50,13 @@ jobs:
           mkdir -p com/jinxservers/
           find . -maxdepth 1 -not -name "com" -not -name "." -type d -exec bash -c "mv {} com/jinxservers/" \;
 
-      - name: Generate checksums for artifacts
+      - name: Generate checksums and signatures for artifacts
         run: |
           cd ~/.m2/repository/com/jinxservers
           find . -name "maven-metadata-local.xml" -type f -exec bash -c "rm {}" \;
-          find . ! -name '*.asc' -type f -exec bash -c "shasum -a 1 {} > {}.sha1" \;
-          find . ! -name '*.asc' ! -name '*.sha1' -type f -exec bash -c "md5sum {} > {}.md5" \;
+          find . -type f -exec bash -c "gpg --pinentry-mode=loopback --passphrase ${{ secrets.PASSPHRASE }} -ab {}" \;
+          find . ! -name '*.asc' -type f -exec bash -c "shasum -a 1 {} | cut -f 1 -d ' ' > {}.sha1" \;
+          find . ! -name '*.asc' ! -name '*.sha1' -type f -exec bash -c "md5sum {} | cut -f 1 -d ' ' > {}.md5" \;
 
       - name: Zip artifacts
         run: |
