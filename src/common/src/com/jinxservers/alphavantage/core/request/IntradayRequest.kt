@@ -10,22 +10,28 @@ import io.ktor.http.*
 internal class IntradayRequest(
     symbol: String,
     interval: ShortInterval,
-    adjusted: Boolean = true,
-    extendedHours: Boolean = true,
-    month: String = "",
-    outputSize: OutputSize = OutputSize.COMPACT,
+    adjusted: Boolean?,
+    extendedHours: Boolean?,
+    month: String?,
+    outputSize: OutputSize?,
 ) : Request<CoreIntraday>(
     urlBuilder = URLBuilder().apply {
         parameters.apply {
             append("function", "TIME_SERIES_INTRADAY")
             append("symbol", symbol)
             append("interval", interval.value())
-            append("adjusted", adjusted.toString())
-            append("extended_hours", extendedHours.toString())
-            if (month.isNotBlank()) {
+            if (adjusted != null) {
+                append("adjusted", adjusted.toString())
+            }
+            if (extendedHours != null) {
+                append("extended_hours", extendedHours.toString())
+            }
+            if (month != null) {
                 append("month", month)
             }
-            append("outputsize", outputSize.size)
+            if (outputSize != null) {
+                append("outputsize", outputSize.size)
+            }
         }
     }
 )

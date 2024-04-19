@@ -7,30 +7,34 @@ import com.jinxservers.alphavantage.util.Topic
 import io.ktor.http.*
 
 internal class MarketNewsRequest(
-    tickers: List<String> = emptyList(),
-    topics: List<Topic> = emptyList(),
-    timeFrom: String = "",
-    timeTo: String = "",
-    sort: Sort = Sort.LATEST,
-    limit: Int = 50
+    tickers: List<String>?,
+    topics: List<Topic>?,
+    timeFrom: String?,
+    timeTo: String?,
+    sort: Sort?,
+    limit: Int?
     ) : Request<MarketNews>(
     urlBuilder = URLBuilder().apply {
         parameters.apply {
             append("function", "NEWS_SENTIMENT")
-            if (tickers.isNotEmpty()) {
+            if (tickers != null) {
                 append("tickers", tickers.joinToString(","))
             }
-            if (topics.isNotEmpty()) {
+            if (topics != null) {
                 append("topics", topics.joinToString(",") { it.value })
             }
-            if (timeFrom.isNotBlank()) {
+            if (timeFrom != null) {
                 append("time_from", timeFrom)
             }
-            if (timeTo.isNotBlank()) {
+            if (timeTo != null) {
                 append("time_to", timeTo)
             }
-            append("sort", sort.name)
-            append("limit", limit.toString())
+            if (sort != null) {
+                append("sort", sort.name)
+            }
+            if (limit != null) {
+                append("limit", limit.toString())
+            }
         }
     }
 )

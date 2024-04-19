@@ -9,16 +9,20 @@ import io.ktor.http.*
 internal class IntradayRequest(
     fromSymbol: String,
     toSymbol: String,
-    interval: ShortInterval,
-    outputSize: OutputSize = OutputSize.COMPACT
+    interval: ShortInterval?,
+    outputSize: OutputSize?
 ) : Request<ForexIntraday>(
     urlBuilder = URLBuilder().apply {
         parameters.apply {
             append("function", "FX_INTRADAY")
             append("from_symbol", fromSymbol)
             append("to_symbol", toSymbol)
-            append("interval", interval.value())
-            append("outputsize", outputSize.size)
+            if (interval != null) {
+                append("interval", interval.value())
+            }
+            if (outputSize != null) {
+                append("outputsize", outputSize.size)
+            }
         }
     }
 )

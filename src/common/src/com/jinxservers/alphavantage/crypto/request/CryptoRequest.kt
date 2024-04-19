@@ -1,12 +1,11 @@
 package com.jinxservers.alphavantage.crypto.request
 
 import com.jinxservers.alphavantage.AlphaVantage
+import com.jinxservers.alphavantage.crypto.response.CryptoDaily
+import com.jinxservers.alphavantage.crypto.response.CryptoIntraday
+import com.jinxservers.alphavantage.crypto.response.CryptoMonthly
+import com.jinxservers.alphavantage.crypto.response.CryptoWeekly
 import com.jinxservers.alphavantage.forex.request.CurrencyExchangeRateRequest
-import com.jinxservers.alphavantage.crypto.request.DailyRequest
-import com.jinxservers.alphavantage.crypto.request.IntradayRequest
-import com.jinxservers.alphavantage.crypto.request.MonthlyRequest
-import com.jinxservers.alphavantage.crypto.request.WeeklyRequest
-import com.jinxservers.alphavantage.crypto.response.*
 import com.jinxservers.alphavantage.forex.response.CurrencyExchangeRate
 import com.jinxservers.alphavantage.util.ShortInterval
 
@@ -18,7 +17,7 @@ public class CryptoRequest internal constructor(
         return alphaVantage.request(CurrencyExchangeRateRequest(fromCurrency, toCurrency))
     }
 
-    public suspend fun getIntraday(fromSymbol: String, toSymbol: String, interval: ShortInterval, outputSize: String = "compact"): CryptoIntraday {
+    public suspend fun getIntraday(fromSymbol: String, toSymbol: String, interval: ShortInterval, outputSize: String? = null): CryptoIntraday {
         return alphaVantage.request(IntradayRequest(fromSymbol, toSymbol, interval, outputSize))
     }
 

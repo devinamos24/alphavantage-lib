@@ -9,15 +9,15 @@ public class CoreRequest internal constructor(
     private val alphaVantage: AlphaVantage
 ) {
 
-    public suspend fun getIntraday(symbol: String, interval: ShortInterval, adjusted: Boolean = true, extendedHours: Boolean = true, month: String = "", outputSize: OutputSize = OutputSize.COMPACT): CoreIntraday {
+    public suspend fun getIntraday(symbol: String, interval: ShortInterval, adjusted: Boolean? = null, extendedHours: Boolean? = null, month: String? = null, outputSize: OutputSize? = null): CoreIntraday {
         return alphaVantage.request(IntradayRequest(symbol, interval, adjusted, extendedHours, month, outputSize))
     }
 
-    public suspend fun getDaily(symbol: String, outputSize: OutputSize = OutputSize.COMPACT): CoreDaily {
+    public suspend fun getDaily(symbol: String, outputSize: OutputSize? = null): CoreDaily {
         return alphaVantage.request(DailyRequest(symbol, outputSize))
     }
 
-    public suspend fun getDailyAdjusted(symbol: String, outputSize: OutputSize = OutputSize.COMPACT): CoreDailyAdjusted {
+    public suspend fun getDailyAdjusted(symbol: String, outputSize: OutputSize? = null): CoreDailyAdjusted {
         return alphaVantage.request(DailyAdjustedRequest(symbol, outputSize))
     }
 
