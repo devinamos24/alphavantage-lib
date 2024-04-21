@@ -10,10 +10,10 @@ import io.ktor.http.*
 internal class IntradayRequest(
     symbol: String,
     interval: ShortInterval,
-    adjusted: Boolean?,
-    extendedHours: Boolean?,
-    month: String?,
-    outputSize: OutputSize?,
+    adjusted: Boolean? = null,
+    extendedHours: Boolean? = null,
+    month: String? = null,
+    outputSize: OutputSize? = null,
 ) : Request<CoreIntraday>(
     urlBuilder = URLBuilder().apply {
         parameters.apply {

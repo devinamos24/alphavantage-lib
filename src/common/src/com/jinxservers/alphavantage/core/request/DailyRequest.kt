@@ -7,7 +7,7 @@ import io.ktor.http.*
 
 internal class DailyRequest(
     symbol: String,
-    outputSize: OutputSize?,
+    outputSize: OutputSize? = null,
 ): Request<CoreDaily>(
     urlBuilder = URLBuilder().apply {
         parameters.apply {

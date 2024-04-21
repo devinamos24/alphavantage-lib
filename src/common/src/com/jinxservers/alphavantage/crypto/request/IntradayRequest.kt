@@ -9,7 +9,7 @@ internal class IntradayRequest(
     symbol: String,
     market: String,
     interval: ShortInterval,
-    outputSize: String?
+    outputSize: String? = null
 ) : Request<CryptoIntraday>(
     urlBuilder = URLBuilder().apply {
         parameters.apply {

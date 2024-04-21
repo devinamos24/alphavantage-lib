@@ -7,8 +7,8 @@ import com.jinxservers.alphavantage.util.Maturity
 import io.ktor.http.*
 
 internal class TreasuryYieldRequest(
-    interval: LongInterval?,
-    maturity: Maturity?
+    interval: LongInterval? = null,
+    maturity: Maturity? = null
 ) : Request<EconomicObject>(
     urlBuilder = URLBuilder().apply {
         parameters.apply {

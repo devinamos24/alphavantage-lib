@@ -7,7 +7,7 @@ import io.ktor.http.*
 
 
 internal class RealGDPRequest(
-    interval: GdpInterval?
+    interval: GdpInterval? = null
 ) : Request<EconomicObject>(
     urlBuilder = URLBuilder().apply {
         parameters.apply {

@@ -7,11 +7,11 @@ import com.jinxservers.alphavantage.util.Topic
 import io.ktor.http.*
 
 internal class MarketNewsRequest(
-    tickers: List<String>?,
-    topics: List<Topic>?,
-    timeFrom: String?,
-    timeTo: String?,
-    sort: Sort?,
+    tickers: List<String>? = null,
+    topics: List<Topic>? = null,
+    timeFrom: String? = null,
+    timeTo: String? = null,
+    sort: Sort? = null,
     limit: Int?
     ) : Request<MarketNews>(
     urlBuilder = URLBuilder().apply {

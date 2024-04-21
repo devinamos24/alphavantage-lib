@@ -6,7 +6,7 @@ import com.jinxservers.alphavantage.util.LongInterval
 import io.ktor.http.*
 
 internal class FederalFundsRateRequest(
-    interval: LongInterval?
+    interval: LongInterval? = null
 ) : Request<EconomicObject>(
     urlBuilder = URLBuilder().apply {
         parameters.apply {

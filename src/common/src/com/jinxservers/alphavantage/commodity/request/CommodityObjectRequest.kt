@@ -7,7 +7,7 @@ import io.ktor.http.*
 
 internal class CommodityObjectRequest(
     function: String,
-    interval: Interval?,
+    interval: Interval? = null,
 ) : Request<CommodityObject>(
     urlBuilder = URLBuilder().apply {
         parameters.apply {

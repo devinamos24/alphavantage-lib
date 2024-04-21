@@ -8,7 +8,7 @@ import io.ktor.http.*
 internal class DailyRequest(
     fromSymbol: String,
     toSymbol: String,
-    outputSize: OutputSize?
+    outputSize: OutputSize? = null
 ) : Request<ForexDaily>(
     urlBuilder = URLBuilder().apply {
         parameters.apply {
