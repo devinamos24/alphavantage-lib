@@ -7,14 +7,18 @@ import com.jinxservers.alphavantage.util.Maturity
 import io.ktor.http.*
 
 internal class TreasuryYieldRequest(
-    interval: LongInterval = LongInterval.MONTHLY,
-    maturity: Maturity = Maturity.TEN_YEAR
+    interval: LongInterval? = null,
+    maturity: Maturity? = null
 ) : Request<EconomicObject>(
     urlBuilder = URLBuilder().apply {
         parameters.apply {
             append("function", "TREASURY_YIELD")
-            append("interval", interval.value())
-            append("maturity", maturity.value)
+            if (interval != null) {
+                append("interval", interval.value())
+            }
+            if (maturity != null) {
+                append("maturity", maturity.value)
+            }
         }
     }
 )

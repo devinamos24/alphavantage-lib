@@ -10,7 +10,7 @@ public class AlphaIntelligenceRequest(
     private val alphaVantage: AlphaVantage
 ) {
 
-    public suspend fun getMarketNews(tickers: List<String> = emptyList(), topics: List<Topic> = emptyList(), timeFrom: String = "", timeTo: String = "", sort: Sort = Sort.LATEST, limit: Int = 50): MarketNews {
+    public suspend fun getMarketNews(tickers: List<String>? = null, topics: List<Topic>? = null, timeFrom: String? = null, timeTo: String? = null, sort: Sort? = null, limit: Int? = null): MarketNews {
         return alphaVantage.request(MarketNewsRequest(tickers, topics, timeFrom, timeTo, sort, limit))
     }
 

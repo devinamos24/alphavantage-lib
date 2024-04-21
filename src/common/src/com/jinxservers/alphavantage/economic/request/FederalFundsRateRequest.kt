@@ -6,12 +6,14 @@ import com.jinxservers.alphavantage.util.LongInterval
 import io.ktor.http.*
 
 internal class FederalFundsRateRequest(
-    interval: LongInterval = LongInterval.MONTHLY
+    interval: LongInterval? = null
 ) : Request<EconomicObject>(
     urlBuilder = URLBuilder().apply {
         parameters.apply {
             append("function", "FEDERAL_FUNDS_RATE")
-            append("interval", interval.value())
+            if (interval != null) {
+                append("interval", interval.value())
+            }
         }
     }
 )

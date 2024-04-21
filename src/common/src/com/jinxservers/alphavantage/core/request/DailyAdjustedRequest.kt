@@ -7,13 +7,15 @@ import io.ktor.http.*
 
 internal class DailyAdjustedRequest(
     symbol: String,
-    outputSize: OutputSize = OutputSize.COMPACT,
+    outputSize: OutputSize? = null,
 ): Request<CoreDailyAdjusted>(
     urlBuilder = URLBuilder().apply {
         parameters.apply {
             append("function", "TIME_SERIES_DAILY_ADJUSTED")
             append("symbol", symbol)
-            append("outputsize", outputSize.size)
+            if (outputSize != null) {
+                append("outputsize", outputSize.size)
+            }
         }
     }
 )

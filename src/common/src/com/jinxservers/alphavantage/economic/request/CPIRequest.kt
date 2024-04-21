@@ -6,12 +6,14 @@ import com.jinxservers.alphavantage.util.CpiInterval
 import io.ktor.http.*
 
 internal class CPIRequest(
-    interval: CpiInterval = CpiInterval.MONTHLY
+    interval: CpiInterval? = null
 ) : Request<EconomicObject>(
     urlBuilder = URLBuilder().apply {
         parameters.apply {
             append("function", "CPI")
-            append("interval", interval.value())
+            if (interval != null) {
+                append("interval", interval.value())
+            }
         }
     }
 )

@@ -11,7 +11,7 @@ public class EconomicRequest internal constructor(
     private val alphaVantage: AlphaVantage
 ) {
 
-    public suspend fun getRealGdp(interval: GdpInterval = GdpInterval.ANNUAL): EconomicObject {
+    public suspend fun getRealGdp(interval: GdpInterval? = null): EconomicObject {
         return alphaVantage.request(RealGDPRequest(interval))
     }
 
@@ -19,15 +19,15 @@ public class EconomicRequest internal constructor(
         return alphaVantage.request(EconomicObjectRequest("REAL_GDP_PER_CAPITA"))
     }
 
-    public suspend fun getTreasuryYield(interval: LongInterval = LongInterval.MONTHLY, maturity: Maturity = Maturity.TEN_YEAR): EconomicObject {
+    public suspend fun getTreasuryYield(interval: LongInterval? = null, maturity: Maturity? = null): EconomicObject {
         return alphaVantage.request(TreasuryYieldRequest(interval, maturity))
     }
 
-    public suspend fun getFederalFundsRate(interval: LongInterval = LongInterval.MONTHLY): EconomicObject {
+    public suspend fun getFederalFundsRate(interval: LongInterval? = null): EconomicObject {
         return alphaVantage.request(FederalFundsRateRequest(interval))
     }
 
-    public suspend fun getCPI(interval: CpiInterval = CpiInterval.MONTHLY): EconomicObject {
+    public suspend fun getCPI(interval: CpiInterval? = null): EconomicObject {
         return alphaVantage.request(CPIRequest(interval))
     }
 
