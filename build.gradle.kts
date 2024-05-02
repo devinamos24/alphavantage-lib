@@ -18,7 +18,7 @@ android {
 }
 
 group = "com.jinxservers"
-version = "0.1.0-alpha"
+version = "0.2.0-alpha"
 
 val dokkaHtml by tasks.getting(org.jetbrains.dokka.gradle.DokkaTask::class)
 
