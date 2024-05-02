@@ -1,9 +1,8 @@
 name: Publish Github Package
 
 on:
-  push:
-    tags:
-      - '**'
+  release:
+    types: [published]
   workflow_dispatch:
 
 
