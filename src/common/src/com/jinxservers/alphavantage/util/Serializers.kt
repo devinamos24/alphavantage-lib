@@ -11,20 +11,6 @@ import kotlinx.serialization.descriptors.SerialDescriptor
 import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
 
-internal object EasternInstantAsStringSerializer : KSerializer<Instant> {
-    override val descriptor: SerialDescriptor = PrimitiveSerialDescriptor("Instant", PrimitiveKind.STRING)
-
-    override fun serialize(encoder: Encoder, value: Instant) {
-        val string = value.toEasternTime().replace("T", " ").replace("-05:00", "")
-        encoder.encodeString(string)
-    }
-
-    override fun deserialize(decoder: Decoder): Instant {
-        val string = decoder.decodeString()
-        return string.replace(" ", "T").plus("-05:00").toInstant()
-    }
-}
-
 internal object CentralInstantAsStringSerializer : KSerializer<Instant> {
     override val descriptor: SerialDescriptor = PrimitiveSerialDescriptor("CentralInstantAsString", PrimitiveKind.STRING)
 
@@ -36,6 +22,20 @@ internal object CentralInstantAsStringSerializer : KSerializer<Instant> {
     override fun deserialize(decoder: Decoder): Instant {
         val string = decoder.decodeString()
         return string.replace(" ", "T").plus("Z").toInstant()
+    }
+}
+
+internal object CentralInstantWithoutSecondsAsStringSerializer : KSerializer<Instant> {
+    override val descriptor: SerialDescriptor = PrimitiveSerialDescriptor("CentralInstantAsString", PrimitiveKind.STRING)
+
+    override fun serialize(encoder: Encoder, value: Instant) {
+        val string = value.toString().replace("T", " ").dropLast(4)
+        encoder.encodeString(string)
+    }
+
+    override fun deserialize(decoder: Decoder): Instant {
+        val string = decoder.decodeString()
+        return string.replace(" ", "T").plus(":00Z").toInstant()
     }
 }
 
@@ -82,7 +82,7 @@ internal object DoubleAsStringSerializer : KSerializer<Double> {
 
     override fun serialize(encoder: Encoder, value: Double) {
         // This string manipulation fixes inconsistencies with the JsNode Double.toString() method
-        val string = value.toString().let {
+        val string = value.toStringWithoutScientific().let {
             if (!it.contains(".")) {
                 it.plus(".0")
             } else {
@@ -105,7 +105,7 @@ internal object NullableDoubleAsStringSerializer : KSerializer<Double?> {
         if (value == null) {
             encoder.encodeString(".")
         } else {
-            encoder.encodeString(value.toString())
+            encoder.encodeString(value.toStringWithoutScientific())
         }
     }
 
@@ -119,7 +119,7 @@ internal object DoubleAsStringSerializer8D : KSerializer<Double> {
     override val descriptor: SerialDescriptor = PrimitiveSerialDescriptor("DoubleAsString8D", PrimitiveKind.STRING)
 
     override fun serialize(encoder: Encoder, value: Double) {
-        val string = value.toString().let {
+        val string = value.toStringWithoutScientific().let {
             var totalDecimals = 0
             var newString = it
             if (it.contains(".")) {
@@ -145,7 +145,7 @@ internal object DoubleAsStringSerializer5D : KSerializer<Double> {
     override val descriptor: SerialDescriptor = PrimitiveSerialDescriptor("DoubleAsString5D", PrimitiveKind.STRING)
 
     override fun serialize(encoder: Encoder, value: Double) {
-        val string = value.toString().let {
+        val string = value.toStringWithoutScientific().let {
             var totalDecimals = 0
             var newString = it
             if (it.contains(".")) {
@@ -171,7 +171,7 @@ internal object DoubleAsStringSerializer4D : KSerializer<Double> {
     override val descriptor: SerialDescriptor = PrimitiveSerialDescriptor("DoubleAsString4D", PrimitiveKind.STRING)
 
     override fun serialize(encoder: Encoder, value: Double) {
-        val string = value.toString().let {
+        val string = value.toStringWithoutScientific().let {
             var totalDecimals = 0
             var newString = it
             if (it.contains(".")) {
@@ -197,7 +197,7 @@ internal object DoubleAsStringSerializer1D : KSerializer<Double> {
     override val descriptor: SerialDescriptor = PrimitiveSerialDescriptor("DoubleAsString1D", PrimitiveKind.STRING)
 
     override fun serialize(encoder: Encoder, value: Double) {
-        val string = value.toString().let {
+        val string = value.toStringWithoutScientific().let {
             var totalDecimals = 0
             var newString = it
             if (it.contains(".")) {
@@ -223,7 +223,7 @@ internal object PercentAsStringSerializer4D : KSerializer<Double> {
     override val descriptor: SerialDescriptor = PrimitiveSerialDescriptor("PercentAsString4D", PrimitiveKind.STRING)
 
     override fun serialize(encoder: Encoder, value: Double) {
-        val string = (value * 100).toString().let {
+        val string = (value * 100).toStringWithoutScientific().let {
             var totalDecimals = 0
             var newString = it
             if (it.contains(".")) {
@@ -249,7 +249,7 @@ internal object PercentAsStringSerializer4DMax : KSerializer<Double> {
     override val descriptor: SerialDescriptor = PrimitiveSerialDescriptor("PercentAsString4DMax", PrimitiveKind.STRING)
 
     override fun serialize(encoder: Encoder, value: Double) {
-        val string = (value * 100).toString()
+        val string = (value * 100).toStringWithoutScientific()
         val integerPart = string.substringBefore(".")
         val decimalPart = string.substringAfter(".").let {
             if (it.count() > 4) {

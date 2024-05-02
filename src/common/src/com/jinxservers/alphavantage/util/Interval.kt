@@ -26,6 +26,21 @@ public enum class LongInterval(private val value: String) : Interval {
     }
 }
 
+public enum class ShortLongInterval(private val value: String) : Interval {
+    ONE_MINUTE("1min"),
+    FIVE_MINUTES("5min"),
+    FIFTEEN_MINUTES("15min"),
+    THIRTY_MINUTES("30min"),
+    SIXTY_MINUTES("60min"),
+    DAILY("daily"),
+    WEEKLY("weekly"),
+    MONTHLY("monthly");
+
+    override fun value(): String {
+        return this.value
+    }
+}
+
 public enum class CommodityInterval(private val value: String) : Interval {
     MONTHLY("monthly"),
     QUARTERLY("quarterly"),
