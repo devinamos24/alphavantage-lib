@@ -10,9 +10,6 @@ internal fun <K,V> Pair<K,V>.toEntry() = object: Map.Entry<K,V> {
     override val value: V = second
 }
 
-internal fun String.substringBetween(startDelimiter: String, endDelimiter: String) =
-    substringBefore(startDelimiter).substringAfter(endDelimiter)
-
 internal fun Instant.toEasternTime(): String = minus(5, DateTimeUnit.HOUR).toString().replace("Z", "-05:00")
 
 internal fun Double.toStringWithoutScientific(): String {
