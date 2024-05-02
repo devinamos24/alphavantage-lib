@@ -11,20 +11,6 @@ import kotlinx.serialization.descriptors.SerialDescriptor
 import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
 
-internal object EasternInstantAsStringSerializer : KSerializer<Instant> {
-    override val descriptor: SerialDescriptor = PrimitiveSerialDescriptor("Instant", PrimitiveKind.STRING)
-
-    override fun serialize(encoder: Encoder, value: Instant) {
-        val string = value.toEasternTime().replace("T", " ").replace("-05:00", "")
-        encoder.encodeString(string)
-    }
-
-    override fun deserialize(decoder: Decoder): Instant {
-        val string = decoder.decodeString()
-        return string.replace(" ", "T").plus("-05:00").toInstant()
-    }
-}
-
 internal object CentralInstantAsStringSerializer : KSerializer<Instant> {
     override val descriptor: SerialDescriptor = PrimitiveSerialDescriptor("CentralInstantAsString", PrimitiveKind.STRING)
 
