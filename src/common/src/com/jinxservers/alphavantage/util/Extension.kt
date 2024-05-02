@@ -1,16 +1,11 @@
 package com.jinxservers.alphavantage.util
 
-import kotlinx.datetime.DateTimeUnit
-import kotlinx.datetime.Instant
-import kotlinx.datetime.minus
 import kotlin.math.abs
 
 internal fun <K,V> Pair<K,V>.toEntry() = object: Map.Entry<K,V> {
     override val key: K = first
     override val value: V = second
 }
-
-internal fun Instant.toEasternTime(): String = minus(5, DateTimeUnit.HOUR).toString().replace("Z", "-05:00")
 
 internal fun Double.toStringWithoutScientific(): String {
     val string = this.toString()
