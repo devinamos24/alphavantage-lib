@@ -7,6 +7,7 @@ import com.jinxservers.alphavantage.crypto.request.CryptoRequest
 import com.jinxservers.alphavantage.economic.request.EconomicRequest
 import com.jinxservers.alphavantage.forex.request.DemoForexRequest
 import com.jinxservers.alphavantage.forex.request.ForexRequest
+import com.jinxservers.alphavantage.technicalIndicators.request.TechnicalIndicatorRequest
 import io.ktor.client.*
 import io.ktor.client.call.*
 import io.ktor.client.plugins.contentnegotiation.*
@@ -55,6 +56,10 @@ public sealed class AlphaVantageBase(
             throw AlphaVantageException("Client failed to get correct data")
         }
     }
+
+    public fun close() {
+        client.close()
+    }
 }
 
 /**
@@ -76,6 +81,8 @@ public class AlphaVantage(
     public fun commodity(): CommodityRequest = CommodityRequest(this)
 
     public fun economic(): EconomicRequest = EconomicRequest(this)
+
+    public fun technicalIndicators(): TechnicalIndicatorRequest = TechnicalIndicatorRequest(this)
 }
 
 
